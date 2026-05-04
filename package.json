@@ -1,0 +1,12 @@
+{
+  "name": "office-schedule",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "sql.js": "^1.10.0",
+    "exceljs": "^4.4.0"
+  }
+}

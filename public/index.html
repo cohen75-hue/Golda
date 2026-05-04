@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0540F2">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<title>לו״ז משרד</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue1: #0540F2;
+  --blue2: #1B63F2;
+  --green: #3BBF4F;
+  --yellow: #F2CB05;
+  --orange: #F2541B;
+  --bg: #F4F5FA;
+  --card: #ffffff;
+  --text: #1a1a2e;
+  --text2: #666;
+  --text3: #aaa;
+  --border: #eef0f5;
+  --chip-bg: #f0f2f8;
+  --entry-bg: #eef3ff;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:'Rubik',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; min-height:100dvh; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+.app { max-width:480px; margin:0 auto; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; position:relative; }
+
+/* Role Screen */
+.role-screen { min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(145deg,var(--blue1),var(--blue2) 60%,#4a7af7); padding:32px 28px; text-align:center; }
+.role-screen .emoji { font-size:56px; margin-bottom:12px; }
+.role-screen h1 { font-size:30px; font-weight:900; color:#fff; margin-bottom:6px; }
+.role-screen p { color:rgba(255,255,255,.7); font-size:16px; margin-bottom:40px; }
+.role-btn { display:block; width:100%; max-width:300px; margin:0 auto 16px; padding:18px 24px; border:none; border-radius:18px; font-size:18px; font-weight:700; cursor:pointer; font-family:'Rubik',sans-serif; box-shadow:0 6px 24px rgba(0,0,0,.15); transition:transform .15s; }
+.role-btn:active { transform:scale(.97); }
+.role-btn.partner { background:var(--yellow); color:#333; }
+.role-btn.viewer { background:var(--green); color:#fff; }
+
+/* Header */
+.header { background:linear-gradient(135deg,var(--blue1),var(--blue2)); padding:calc(var(--safe-top) + 16px) 20px 16px; display:flex; align-items:center; justify-content:space-between; }
+.header-right { display:flex; align-items:center; gap:12px; }
+.header h1 { font-size:22px; font-weight:800; color:#fff; }
+.header .role-tag { font-size:11px; color:rgba(255,255,255,.55); margin-top:1px; }
+.switch-btn { background:rgba(255,255,255,.14); border:none; color:#fff; font-size:12px; padding:7px 14px; border-radius:10px; cursor:pointer; font-family:'Rubik',sans-serif; font-weight:600; }
+
+/* Bell */
+.bell-wrap { position:relative; }
+.bell-btn { background:none; border:none; cursor:pointer; padding:6px; position:relative; }
+.bell-badge { position:absolute; top:1px; right:1px; background:var(--orange); color:#fff; border-radius:50%; width:19px; height:19px; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+.bell-dropdown { position:absolute; top:44px; right:-8px; width:310px; max-height:400px; overflow-y:auto; background:#fff; border-radius:16px; box-shadow:0 12px 48px rgba(0,0,0,.2); z-index:200; animation:slideDown .25s ease; }
+.notif-item { padding:14px 18px; border-bottom:1px solid var(--border); }
+.notif-item.unread { background:#eef3ff; }
+.notif-title { font-size:14px; font-weight:600; color:var(--blue1); }
+.notif-detail { font-size:13px; color:#555; margin-top:3px; }
+.notif-ago { font-size:11px; color:#bbb; margin-top:4px; }
+
+/* Sync */
+.sync-bar { padding:6px 20px; font-size:11px; font-weight:600; text-align:center; transition:all .3s; }
+.sync-bar.connected { background:rgba(59,191,79,.1); color:var(--green); }
+.sync-bar.disconnected { background:rgba(242,84,27,.1); color:var(--orange); }
+
+/* Tabs */
+.tabs { display:flex; gap:6px; padding:12px 16px; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,.03); }
+.tab { flex:1; padding:11px 0; border:none; border-radius:13px; font-size:15px; font-weight:700; cursor:pointer; font-family:'Rubik',sans-serif; background:var(--chip-bg); color:var(--text3); transition:all .2s; }
+.tab.active { background:var(--blue1); color:#fff; }
+
+/* Nav */
+.nav { display:flex; align-items:center; padding:12px 16px; gap:8px; }
+.nav-btn { width:40px; height:40px; border-radius:13px; border:none; background:#fff; font-size:18px; cursor:pointer; font-weight:700; color:var(--blue1); box-shadow:0 2px 8px rgba(0,0,0,.05); transition:transform .1s; }
+.nav-btn:active { transform:scale(.92); }
+.nav-center { flex:1; text-align:center; }
+.nav-label { font-size:16px; font-weight:700; color:var(--text); }
+.today-btn { margin-right:8px; background:var(--yellow); border:none; border-radius:8px; padding:5px 14px; font-size:12px; font-weight:700; cursor:pointer; color:#333; font-family:'Rubik',sans-serif; }
+
+/* Content */
+.content { flex:1; overflow-y:auto; padding:0 16px 120px; -webkit-overflow-scrolling:touch; }
+
+/* Week */
+.week-row { display:flex; align-items:stretch; gap:10px; background:var(--card); border-radius:16px; padding:13px 14px; margin-bottom:8px; box-shadow:0 2px 8px rgba(0,0,0,.025); border-right:4px solid transparent; transition:all .2s; }
+.week-row.today { border-right-color:var(--yellow); background:#fffdf0; }
+.week-day { display:flex; flex-direction:column; align-items:center; width:52px; flex-shrink:0; justify-content:center; }
+.week-day .day-name { font-size:13px; font-weight:700; color:var(--text2); }
+.week-day .day-num { font-size:23px; font-weight:800; color:var(--text); }
+.week-row.today .day-name, .week-row.today .day-num { color:var(--blue1); }
+.week-slots { flex:1; display:flex; flex-direction:column; gap:6px; justify-content:center; }
+.slot-chip { display:flex; align-items:center; gap:8px; background:var(--entry-bg); border-radius:12px; padding:8px 12px; direction:ltr; }
+.slot-time { font-weight:700; font-size:14px; color:var(--blue1); white-space:nowrap; }
+.slot-actions { display:flex; gap:4px; margin-inline-start:auto; direction:rtl; }
+.empty-label { color:#d0d0d0; font-size:13px; font-style:italic; text-align:center; }
+.week-add-col { display:flex; flex-direction:column; gap:4px; justify-content:center; }
+
+.btn-sm { width:34px; height:34px; border-radius:10px; border:none; color:#fff; font-size:18px; cursor:pointer; font-weight:700; flex-shrink:0; transition:transform .1s; display:flex; align-items:center; justify-content:center; }
+.btn-sm:active { transform:scale(.9); }
+.btn-sm.add { background:var(--green); }
+.btn-sm.edit { background:var(--blue2); font-size:14px; }
+.btn-sm.del { background:var(--orange); font-size:12px; }
+.btn-sm.note { background:#9b59b6; font-size:14px; position:relative; }
+.btn-sm.note.has-note { box-shadow:0 0 0 2px var(--yellow); }
+.note-dot { position:absolute; top:-2px; right:-2px; width:10px; height:10px; border-radius:50%; background:var(--yellow); border:2px solid #fff; }
+.unread-dot { position:absolute; top:-2px; right:-2px; width:10px; height:10px; border-radius:50%; background:var(--orange); border:2px solid #fff; animation:pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
+
+/* Month */
+.month-header { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:4px; }
+.month-header-cell { text-align:center; font-size:12px; font-weight:700; color:var(--text3); padding:6px; }
+.month-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+.month-cell { display:flex; flex-direction:column; align-items:center; padding:8px 2px; background:var(--card); border-radius:10px; min-height:56px; cursor:default; transition:background .15s; }
+.month-cell.clickable { cursor:pointer; }
+.month-cell.clickable:active { background:#eef3ff; }
+.month-cell.outside { opacity:.25; }
+.month-num { font-size:14px; font-weight:600; color:var(--text); width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:50%; }
+.month-num.today-num { background:var(--blue1); color:#fff; }
+.month-dots { display:flex; gap:2px; margin-top:3px; }
+.month-dot { width:6px; height:6px; border-radius:50%; background:var(--green); }
+.month-time { font-size:8px; color:var(--blue1); font-weight:600; margin-top:1px; }
+
+/* Day */
+.day-card { background:var(--card); border-radius:22px; padding:28px 20px; box-shadow:0 4px 24px rgba(0,0,0,.05); margin-top:12px; }
+.day-card .dc-emoji { font-size:48px; text-align:center; margin-bottom:12px; }
+.day-card .dc-label { text-align:center; font-size:15px; color:var(--text3); }
+.day-slot-list { margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+.day-slot { background:var(--entry-bg); border-radius:16px; padding:16px; }
+.day-slot-time { font-size:26px; font-weight:800; color:var(--blue1); direction:ltr; text-align:center; }
+.day-slot-bar { position:relative; height:8px; background:#e0e6f5; border-radius:6px; margin-top:10px; overflow:hidden; }
+.day-slot-bar-fill { position:absolute; height:100%; border-radius:6px; background:linear-gradient(90deg,var(--blue1),var(--blue2)); }
+.day-slot-actions { display:flex; gap:8px; margin-top:12px; justify-content:center; }
+.action-btn { border:none; color:#fff; padding:10px 20px; border-radius:13px; font-size:14px; font-weight:700; cursor:pointer; font-family:'Rubik',sans-serif; transition:transform .1s; }
+.action-btn:active { transform:scale(.95); }
+
+/* Modal */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:300; display:flex; align-items:flex-end; justify-content:center; animation:fadeIn .2s ease; }
+.modal { background:#fff; border-radius:26px 26px 0 0; padding:28px 22px calc(var(--safe-bottom) + 32px); width:100%; max-width:480px; max-height:85vh; overflow-y:auto; animation:slideUp .3s ease; }
+.modal h3 { font-size:19px; font-weight:800; color:var(--blue1); margin-bottom:22px; }
+.modal label { display:block; font-size:13px; font-weight:700; color:var(--text3); margin-bottom:8px; }
+.time-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
+.time-chip { padding:11px 0; border:2px solid var(--border); border-radius:11px; background:#fafbff; font-size:14px; font-weight:600; cursor:pointer; font-family:'Rubik',sans-serif; color:var(--text2); text-align:center; transition:all .15s; }
+.time-chip:active { transform:scale(.95); }
+.time-chip.sel-arrive { background:var(--blue1); color:#fff; border-color:var(--blue1); }
+.time-chip.sel-leave { background:var(--orange); color:#fff; border-color:var(--orange); }
+.time-chip.disabled { opacity:.3; pointer-events:none; }
+.note-input { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:12px; font-family:'Rubik',sans-serif; font-size:14px; resize:none; min-height:60px; margin-top:4px; direction:rtl; }
+.note-input:focus { outline:none; border-color:var(--blue2); }
+.modal-actions { display:flex; gap:10px; margin-top:26px; }
+.save-btn { flex:1; padding:15px 0; border:none; border-radius:15px; background:var(--green); color:#fff; font-size:17px; font-weight:800; cursor:pointer; font-family:'Rubik',sans-serif; }
+.cancel-btn { padding:15px 24px; border:none; border-radius:15px; background:var(--chip-bg); color:var(--text3); font-size:15px; font-weight:700; cursor:pointer; font-family:'Rubik',sans-serif; }
+.validation-err { background:rgba(242,84,27,.1); color:var(--orange); padding:10px 14px; border-radius:10px; font-size:13px; font-weight:600; margin-bottom:14px; }
+
+/* Recurring toggle */
+.recurring-toggle { display:flex; align-items:center; gap:12px; margin-top:18px; padding:14px 16px; background:var(--chip-bg); border-radius:14px; cursor:pointer; }
+.recurring-toggle input { display:none; }
+.toggle-track { width:46px; height:26px; border-radius:13px; background:#ccc; position:relative; transition:background .2s; flex-shrink:0; }
+.toggle-track.on { background:var(--green); }
+.toggle-knob { position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:transform .2s; box-shadow:0 1px 4px rgba(0,0,0,.15); }
+.toggle-track.on .toggle-knob { transform:translateX(20px); }
+.recurring-label { font-size:14px; font-weight:600; color:var(--text); }
+.recurring-sub { font-size:11px; color:var(--text3); margin-top:2px; }
+
+/* Recurring badge on slot chip */
+.rec-badge { background:var(--green); color:#fff; font-size:9px; font-weight:700; padding:2px 6px; border-radius:6px; white-space:nowrap; }
+
+/* Export/Import buttons */
+.io-bar { display:flex; gap:8px; padding:0 16px 10px; }
+.export-btn, .import-btn { flex:1; display:flex; align-items:center; justify-content:center; gap:8px; background:#fff; border:2px solid var(--border); border-radius:13px; padding:10px 14px; font-size:13px; font-weight:700; cursor:pointer; font-family:'Rubik',sans-serif; color:var(--blue1); transition:all .15s; }
+.export-btn:active, .import-btn:active { transform:scale(.97); background:var(--entry-bg); }
+.import-btn { color:var(--green); }
+.export-btn svg, .import-btn svg { flex-shrink:0; }
+
+/* Delete recurring dialog */
+.del-recurring-opts { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+.del-recurring-opts button { padding:13px; border:none; border-radius:13px; font-size:14px; font-weight:700; cursor:pointer; font-family:'Rubik',sans-serif; transition:transform .1s; }
+.del-recurring-opts button:active { transform:scale(.97); }
+
+/* Import mode dialog */
+.import-dialog { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:360; display:flex; align-items:center; justify-content:center; padding:20px; animation:fadeIn .15s; }
+.import-dialog-card { background:#fff; border-radius:20px; padding:28px; max-width:320px; width:100%; text-align:center; box-shadow:0 12px 48px rgba(0,0,0,.2); animation:slideUp .25s ease; }
+.import-dialog-card .imp-icon { font-size:44px; margin-bottom:10px; }
+.import-dialog-card h4 { font-size:17px; font-weight:800; color:var(--blue1); margin-bottom:8px; }
+.import-dialog-card p { font-size:13px; color:var(--text2); margin-bottom:18px; line-height:1.5; }
+.import-opts { display:flex; flex-direction:column; gap:10px; }
+.import-opts button { padding:14px; border:none; border-radius:13px; font-size:14px; font-weight:700; cursor:pointer; font-family:'Rubik',sans-serif; transition:transform .1s; text-align:right; direction:rtl; }
+.import-opts button:active { transform:scale(.97); }
+.import-opts .opt-title { font-size:14px; font-weight:700; }
+.import-opts .opt-desc { font-size:11px; font-weight:400; opacity:.7; margin-top:2px; }
+
+/* Note popup */
+.note-popup { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:350; display:flex; align-items:center; justify-content:center; padding:20px; animation:fadeIn .2s; }
+.note-popup-card { background:#fff; border-radius:20px; padding:24px; max-width:340px; width:100%; box-shadow:0 12px 48px rgba(0,0,0,.2); animation:slideUp .3s ease; }
+.note-popup-card h4 { font-size:16px; font-weight:700; color:var(--blue1); margin-bottom:12px; }
+.note-popup-card .note-text { font-size:14px; color:var(--text); line-height:1.6; white-space:pre-wrap; }
+.note-popup-card .note-sender { font-size:12px; color:var(--text3); margin-top:8px; }
+.note-close { display:block; width:100%; margin-top:16px; padding:10px; border:none; border-radius:12px; background:var(--chip-bg); font-size:14px; font-weight:600; cursor:pointer; font-family:'Rubik',sans-serif; }
+
+/* Messages section in note popup */
+.msg-list { margin-top:14px; max-height:200px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
+.msg-bubble { padding:10px 14px; border-radius:14px; font-size:13px; max-width:85%; line-height:1.5; position:relative; }
+.msg-bubble.partner { background:var(--entry-bg); color:var(--blue1); align-self:flex-start; border-bottom-right-radius:4px; }
+.msg-bubble.viewer { background:#f0faf0; color:#2a7a2a; align-self:flex-end; border-bottom-left-radius:4px; }
+.msg-meta { font-size:10px; color:var(--text3); margin-top:3px; display:flex; align-items:center; gap:4px; }
+.msg-read-icon { color:var(--blue2); font-size:11px; }
+.msg-input-row { display:flex; gap:8px; margin-top:12px; }
+.msg-input { flex:1; padding:10px 14px; border:2px solid var(--border); border-radius:12px; font-family:'Rubik',sans-serif; font-size:14px; direction:rtl; }
+.msg-input:focus { outline:none; border-color:var(--blue2); }
+.msg-send { width:42px; height:42px; border:none; border-radius:12px; background:var(--green); color:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+
+/* Install */
+.install-banner { position:fixed; bottom:0; left:0; right:0; background:linear-gradient(135deg,var(--blue1),var(--blue2)); padding:16px 20px calc(var(--safe-bottom) + 16px); display:flex; align-items:center; gap:14px; z-index:100; max-width:480px; margin:0 auto; animation:slideUp .4s ease; }
+.install-banner p { flex:1; color:#fff; font-size:14px; font-weight:600; }
+.install-banner .inst-btn { background:var(--yellow); border:none; color:#333; padding:10px 20px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; font-family:'Rubik',sans-serif; white-space:nowrap; }
+.install-banner .close-inst { background:none; border:none; color:rgba(255,255,255,.6); font-size:20px; cursor:pointer; padding:4px; }
+
+/* Toast */
+.toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(30px); background:var(--green); color:#fff; padding:14px 28px; border-radius:16px; font-weight:700; font-size:15px; z-index:400; box-shadow:0 8px 32px rgba(0,0,0,.22); opacity:0; transition:all .35s cubic-bezier(.4,0,.2,1); pointer-events:none; display:flex; align-items:center; gap:10px; white-space:nowrap; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast.error { background:var(--orange); }
+.toast.delete-toast { background:#e74c3c; }
+.toast-icon { font-size:20px; flex-shrink:0; }
+
+/* Loading button */
+.save-btn.loading { opacity:.7; pointer-events:none; position:relative; }
+.save-btn.loading::after { content:''; position:absolute; width:20px; height:20px; border:3px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .6s linear infinite; right:16px; top:50%; margin-top:-10px; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* Success flash on slot */
+@keyframes successFlash { 0%{box-shadow:0 0 0 0 rgba(59,191,79,.5)} 50%{box-shadow:0 0 0 8px rgba(59,191,79,.25)} 100%{box-shadow:0 0 0 0 rgba(59,191,79,0)} }
+.slot-chip.just-saved { animation:successFlash .8s ease-out; border:2px solid var(--green); }
+.week-row.just-saved { animation:successFlash .8s ease-out; }
+
+/* Delete flash */
+@keyframes deleteFlash { 0%{opacity:1;transform:scale(1)} 100%{opacity:0;transform:scale(.92)} }
+.slot-chip.deleting { animation:deleteFlash .35s ease-out forwards; }
+
+/* Delete confirm */
+.delete-confirm { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:360; display:flex; align-items:center; justify-content:center; padding:20px; animation:fadeIn .15s; }
+.delete-confirm-card { background:#fff; border-radius:20px; padding:28px; max-width:300px; width:100%; text-align:center; box-shadow:0 12px 48px rgba(0,0,0,.2); animation:slideUp .25s ease; }
+.delete-confirm-card .del-icon { font-size:44px; margin-bottom:10px; }
+.delete-confirm-card p { font-size:15px; color:var(--text); margin-bottom:20px; font-weight:600; }
+.delete-confirm-card .del-btns { display:flex; gap:10px; }
+.delete-confirm-card .del-yes { flex:1; padding:12px; border:none; border-radius:13px; background:var(--orange); color:#fff; font-size:15px; font-weight:700; cursor:pointer; font-family:'Rubik',sans-serif; }
+.delete-confirm-card .del-no { flex:1; padding:12px; border:none; border-radius:13px; background:var(--chip-bg); color:var(--text2); font-size:15px; font-weight:700; cursor:pointer; font-family:'Rubik',sans-serif; }
+
+/* Incoming update flash for viewer */
+@keyframes incomingFlash { 0%{background:rgba(59,191,79,.2)} 100%{background:transparent} }
+.week-row.incoming { animation:incomingFlash 1.5s ease-out; }
+
+@keyframes fadeIn { from{opacity:0}to{opacity:1} }
+@keyframes slideUp { from{transform:translateY(100%)}to{transform:translateY(0)} }
+@keyframes slideDown { from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)} }
+.content::-webkit-scrollbar { width:0; }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+const DAYS_HE = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+const DAYS_SHORT = ['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
+const MONTHS_HE = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+const TIME_SLOTS = [];
+for (let h = 7; h <= 22; h++) { TIME_SLOTS.push(`${String(h).padStart(2,'0')}:00`); if (h < 22) TIME_SLOTS.push(`${String(h).padStart(2,'0')}:30`); }
+const EVEN_SLOTS = TIME_SLOTS.filter((_,i) => i % 2 === 0);
+
+let state = {
+  role: localStorage.getItem('office_role') || null,
+  view: 'week',
+  cursor: new Date(),
+  slots: {},       // { date: [{id, arrive, leave, note}] }
+  messages: [],
+  notifications: [],
+  addMode: null,   // dateKey
+  editSlotId: null,
+  arrive: '09:00',
+  leave: '17:00',
+  slotNote: '',
+  sseConnected: false,
+  showInstall: false,
+  toastMsg: null,
+  toastErr: false,
+  bellOpen: false,
+  notePopup: null,  // { date, slotId }
+  msgInput: '',
+  validationErr: '',
+  saving: false,
+  recurring: false,
+  deleteConfirm: null,  // slotId
+  deleteRecurringGroup: null, // for recurring delete choice
+  lastSavedSlotId: null,
+  lastDeletedDate: null,
+  incomingDates: new Set(),
+  importing: false,
+  importFile: null,  // ArrayBuffer waiting for mode choice
+};
+
+let deferredPrompt = null;
+let toastTimer = null;
+let eventSource = null;
+
+const dateKey = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const parseDate = k => { const [y,m,d] = k.split('-').map(Number); return new Date(y,m-1,d); };
+const addDays = (d,n) => { const r = new Date(d); r.setDate(r.getDate()+n); return r; };
+const getWeekStart = d => { const dt = new Date(d); dt.setDate(dt.getDate()-dt.getDay()); dt.setHours(0,0,0,0); return dt; };
+const today = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
+const todayKey = () => dateKey(today());
+const agoText = ts => { const m = Math.round((Date.now()-ts)/60000); return m<1?'עכשיו':m<60?`לפני ${m} דק׳`:m<1440?`לפני ${Math.round(m/60)} שע׳`:`לפני ${Math.round(m/1440)} ימים`; };
+
+// ─── API ──────────────────────────────────────────────
+async function fetchSlots() {
+  try { const r = await fetch('/api/slots'); state.slots = await r.json(); } catch(e) { console.error(e); }
+}
+async function fetchMessages() {
+  try { const r = await fetch('/api/messages'); state.messages = await r.json(); } catch(e) { console.error(e); }
+}
+async function fetchNotifications() {
+  try { const r = await fetch('/api/notifications'); state.notifications = await r.json(); } catch(e) { console.error(e); }
+}
+async function markNotifsRead() {
+  const role = state.role === 'partner' ? 'partner' : 'viewer';
+  try { await fetch('/api/notifications/read', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({role}) }); state.notifications.forEach(n => { if(role==='partner') n.read_by_partner=1; else n.read_by_viewer=1; }); } catch(e){}
+}
+async function markMessagesRead() {
+  const reader = state.role === 'partner' ? 'partner' : 'viewer';
+  try { await fetch('/api/messages/read', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({reader}) }); } catch(e){}
+}
+
+// ─── SSE ──────────────────────────────────────────────
+function connectSSE() {
+  if (eventSource) eventSource.close();
+  eventSource = new EventSource('/api/events');
+  eventSource.onopen = () => { state.sseConnected = true; render(); };
+  eventSource.onmessage = async (e) => {
+    const data = JSON.parse(e.data);
+    if (data.type === 'connected') { state.sseConnected = true; render(); return; }
+    if (data.type === 'slot_add') {
+      if (!state.slots[data.date]) state.slots[data.date] = [];
+      if (!state.slots[data.date].find(s => s.id === data.slot.id)) state.slots[data.date].push(data.slot);
+      state.incomingDates.add(data.date);
+      setTimeout(() => { state.incomingDates.delete(data.date); render(); }, 2000);
+    } else if (data.type === 'slot_update') {
+      const arr = state.slots[data.date];
+      if (arr) { const i = arr.findIndex(s => s.id === data.slot.id); if (i>=0) arr[i] = data.slot; }
+      state.incomingDates.add(data.date);
+      setTimeout(() => { state.incomingDates.delete(data.date); render(); }, 2000);
+    } else if (data.type === 'slot_delete') {
+      const arr = state.slots[data.date];
+      if (arr) { state.slots[data.date] = arr.filter(s => s.id !== data.slotId); if (!state.slots[data.date].length) delete state.slots[data.date]; }
+    } else if (data.type === 'full_refresh') {
+      // Rebuild slots from full list
+      state.slots = {};
+      for (const r of data.slots) {
+        if (!state.slots[r.date]) state.slots[r.date] = [];
+        state.slots[r.date].push({ id: r.id, arrive: r.arrive, leave: r.leave_time, note: r.note || '', recurring: r.recurring || 0, recurringGroup: r.recurring_group || null });
+      }
+    } else if (data.type === 'message') {
+      state.messages.unshift(data.msg);
+    } else if (data.type === 'messages_read') {
+      const mySender = state.role === 'partner' ? 'partner' : 'viewer';
+      if (data.reader !== mySender) {
+        state.messages.forEach(m => { if (m.sender === mySender) m.read_status = 1; });
+      }
+    }
+    await fetchNotifications();
+    render();
+  };
+  eventSource.onerror = () => { state.sseConnected = false; try { render(); } catch(e) { console.error('render err:', e); } setTimeout(connectSSE, 5000); };
+}
+
+// PWA
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; state.showInstall = true; render(); });
+function promptInstall() { if(!deferredPrompt)return; deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>{ state.showInstall=false; deferredPrompt=null; render(); }); }
+
+function showToast(msg, type) {
+  // type: 'success' | 'error' | 'delete' | 'info'
+  state.toastMsg = msg; state.toastType = type || 'success'; render();
+  clearTimeout(toastTimer);
+  // Haptic feedback
+  if (navigator.vibrate) navigator.vibrate(type === 'delete' ? [50,30,50] : [40]);
+  requestAnimationFrame(() => { const el = document.querySelector('.toast'); if(el) el.classList.add('show'); });
+  toastTimer = setTimeout(() => { const el = document.querySelector('.toast'); if(el) el.classList.remove('show'); setTimeout(()=>{ state.toastMsg=null; render(); },350); }, 2800);
+}
+
+// ─── Render ───────────────────────────────────────────
+function render() {
+  const app = document.getElementById('app');
+  if (!state.role) { app.innerHTML = renderRoleScreen(); bindRoleEvents(); return; }
+  const isP = state.role === 'partner';
+  let h = '';
+  h += `<div class="header"><div class="header-right">${renderBell()}<div><h1>לו״ז משרד</h1><div class="role-tag">${isP ? '🧑‍💼 שלומית' : '👀 צופה'}</div></div></div><button class="switch-btn" onclick="switchRole()">החלף תפקיד</button></div>`;
+  h += `<div class="sync-bar ${state.sseConnected?'connected':'disconnected'}">${state.sseConnected?'● מסונכרן':'○ מתחבר...'}</div>`;
+  h += `<div class="io-bar">
+    <button class="export-btn" onclick="exportExcel()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>ייצוא</button>
+    <button class="import-btn" onclick="triggerImport()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>יבוא</button>
+    <input type="file" id="importFileInput" accept=".xlsx,.xls" style="display:none" onchange="handleImport(event)">
+  </div>`;
+  h += `<div class="tabs">${['day','week','month'].map(v=>`<button class="tab ${state.view===v?'active':''}" onclick="setView('${v}')">${v==='day'?'יום':v==='week'?'שבוע':'חודש'}</button>`).join('')}</div>`;
+  h += renderNav();
+  h += `<div class="content">`;
+  if (state.view==='month') h += renderMonth();
+  else if (state.view==='week') h += renderWeek();
+  else h += renderDay();
+  h += `</div>`;
+  if (state.addMode) h += renderModal();
+  if (state.notePopup) h += renderNotePopup();
+  if (state.deleteConfirm) {
+    const delSlot = findSlotById(state.deleteConfirm);
+    const isRec = delSlot && delSlot.recurring;
+    if (isRec) {
+      h += `<div class="delete-confirm" onclick="cancelDelete()"><div class="delete-confirm-card" onclick="event.stopPropagation()"><div class="del-icon">🗑️</div><p>זהו מקבץ קבוע (חוזר). מה למחוק?</p><div class="del-recurring-opts"><button style="background:var(--orange);color:#fff" onclick="confirmDelete(false)">רק את הפעם הזו</button><button style="background:#e74c3c;color:#fff" onclick="confirmDelete(true)">את כל המופעים העתידיים</button><button style="background:var(--chip-bg);color:var(--text2)" onclick="cancelDelete()">ביטול</button></div></div></div>`;
+    } else {
+      h += `<div class="delete-confirm" onclick="cancelDelete()"><div class="delete-confirm-card" onclick="event.stopPropagation()"><div class="del-icon">🗑️</div><p>למחוק את המקבץ?</p><div class="del-btns"><button class="del-yes" onclick="confirmDelete(false)">מחק</button><button class="del-no" onclick="cancelDelete()">ביטול</button></div></div></div>`;
+    }
+  }
+  if (state.toastMsg) { const tClass = state.toastType==='error'?'error':state.toastType==='delete'?'delete-toast':''; const tIcon = state.toastType==='success'?'✓':state.toastType==='delete'?'🗑️':state.toastType==='error'?'⚠️':'ℹ️'; h += `<div class="toast ${tClass}"><span class="toast-icon">${tIcon}</span>${state.toastMsg}</div>`; }
+  if (state.importFile) {
+    h += `<div class="import-dialog" onclick="cancelImport()"><div class="import-dialog-card" onclick="event.stopPropagation()">
+      <div class="imp-icon">📥</div>
+      <h4>יבוא מאקסל</h4>
+      <p>איך לטפל בנתונים?</p>
+      <div class="import-opts">
+        <button style="background:var(--green);color:#fff" onclick="doImport('merge')">
+          <div class="opt-title">➕ עדכון בלבד</div>
+          <div class="opt-desc">הוספת אירועים חדשים מהאקסל, שמירה על הקיימים</div>
+        </button>
+        <button style="background:var(--orange);color:#fff" onclick="doImport('rebuild')">
+          <div class="opt-title">🔄 בנייה מחדש</div>
+          <div class="opt-desc">החלפה מלאה — מחיקת אירועים שלא באקסל</div>
+        </button>
+        <button style="background:var(--chip-bg);color:var(--text2)" onclick="cancelImport()">ביטול</button>
+      </div>
+    </div></div>`;
+  }
+  if (state.showInstall) h += `<div class="install-banner"><p>📲 התקן כאפליקציה</p><button class="inst-btn" onclick="promptInstall()">התקן</button><button class="close-inst" onclick="dismissInstall()">✕</button></div>`;
+  app.innerHTML = h;
+  if (state.toastMsg) requestAnimationFrame(()=>{ const t=document.querySelector('.toast'); if(t) t.classList.add('show'); });
+}
+
+function renderRoleScreen() {
+  return `<div class="role-screen"><div class="emoji">🏢</div><h1>לו״ז משרד</h1><p>מי אתה?</p><button class="role-btn partner" data-role="partner">🧑‍💼 שלומית (מעדכנת לו״ז)</button><button class="role-btn viewer" data-role="me">👀 צופה (מקבל עדכונים)</button></div>`;
+}
+function bindRoleEvents() {
+  document.querySelectorAll('.role-btn').forEach(b => b.addEventListener('click', () => { localStorage.setItem('office_role', b.dataset.role); state.role = b.dataset.role; init(); }));
+}
+
+function renderBell() {
+  const role = state.role === 'partner' ? 'partner' : 'viewer';
+  const notifs = Array.isArray(state.notifications) ? state.notifications : [];
+  const unread = notifs.filter(n => role==='partner' ? !n.read_by_partner : !n.read_by_viewer).length;
+  let h = `<div class="bell-wrap"><button class="bell-btn" onclick="toggleBell()"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>${unread>0?`<span class="bell-badge">${unread}</span>`:''}
+  </button>`;
+  if (state.bellOpen) {
+    h += `<div class="bell-dropdown">`;
+    if (!notifs.length) h += `<div style="padding:28px;text-align:center;color:#bbb;font-size:14px">אין עדכונים</div>`;
+    else notifs.slice(0,20).forEach(n => {
+      const d = parseDate(n.date);
+      const isRead = role==='partner' ? n.read_by_partner : n.read_by_viewer;
+      const icon = n.action==='delete'?'❌':n.action==='message'?'💬':'✅';
+      const senderLabel = n.sender==='partner'?'שלומית':'צופה';
+      h += `<div class="notif-item ${isRead?'':'unread'}"><div class="notif-title">${icon} ${n.action==='delete'?'ביטול':n.action==='message'?'הודעה מ'+senderLabel:'עדכון'} — ${DAYS_HE[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}</div>${n.detail?`<div class="notif-detail">${n.detail}</div>`:''}<div class="notif-ago">${agoText(n.timestamp)}</div></div>`;
+    });
+    h += `</div>`;
+  }
+  h += `</div>`;
+  return h;
+}
+
+function renderNav() {
+  const c = state.cursor;
+  let label = '';
+  if (state.view==='day') label = `${DAYS_HE[c.getDay()]} ${c.getDate()} ${MONTHS_HE[c.getMonth()]}`;
+  else if (state.view==='week') { const ws=getWeekStart(c); const we=addDays(ws,6); label = `${ws.getDate()}–${we.getDate()} ${MONTHS_HE[ws.getMonth()]} ${ws.getFullYear()}`; }
+  else label = `${MONTHS_HE[c.getMonth()]} ${c.getFullYear()}`;
+  return `<div class="nav"><button class="nav-btn" onclick="nav(-1)">→</button><div class="nav-center"><span class="nav-label">${label}</span><button class="today-btn" onclick="goToday()">היום</button></div><button class="nav-btn" onclick="nav(1)">←</button></div>`;
+}
+
+function slotsForDate(key) { return state.slots[key] || []; }
+function msgsForDate(key, slotId) {
+  return state.messages.filter(m => m.date === key && (slotId == null || m.slot_id === slotId || m.slot_id == null));
+}
+function hasUnreadMsgs(key, slotId) {
+  const mySender = state.role === 'partner' ? 'partner' : 'viewer';
+  return state.messages.some(m => m.date === key && (slotId == null || m.slot_id === slotId || m.slot_id == null) && m.sender !== mySender && !m.read_status);
+}
+
+function renderSlotChip(slot, key, isP) {
+  const msgs = msgsForDate(key, slot.id);
+  const hasUnread = hasUnreadMsgs(key, slot.id);
+  const hasNote = slot.note || msgs.length > 0;
+  const isSaved = state.lastSavedSlotId === slot.id;
+  const recBadge = slot.recurring ? '<span class="rec-badge">🔁 קבוע</span>' : '';
+  let h = `<div class="slot-chip ${isSaved?'just-saved':''}">
+    <span class="slot-time">${slot.arrive} – ${slot.leave}</span>${recBadge}
+    <div class="slot-actions">
+      <button class="btn-sm note ${hasNote?'has-note':''}" onclick="event.stopPropagation();openNotePopup('${key}',${slot.id})" title="הודעות">💬${hasUnread?'<span class="unread-dot"></span>':hasNote?'<span class="note-dot"></span>':''}</button>
+      ${isP ? `<button class="btn-sm edit" onclick="event.stopPropagation();openEdit('${key}',${slot.id})">✎</button><button class="btn-sm del" onclick="event.stopPropagation();doDelete(${slot.id})">✕</button>` : ''}
+    </div>
+  </div>`;
+  return h;
+}
+
+function renderWeek() {
+  const ws = getWeekStart(state.cursor);
+  const isP = state.role === 'partner';
+  const tk = todayKey();
+  let h = '';
+  for (let i=0;i<7;i++) {
+    const d = addDays(ws,i);
+    const key = dateKey(d);
+    const slots = slotsForDate(key);
+    const isToday = key===tk;
+    const isSat = d.getDay()===6;
+    const isIncoming = state.incomingDates.has(key);
+    h += `<div class="week-row ${isToday?'today':''} ${isIncoming?'incoming':''}">
+      <div class="week-day"><span class="day-name">${DAYS_HE[d.getDay()]}</span><span class="day-num">${d.getDate()}</span></div>
+      <div class="week-slots">`;
+    if (slots.length) {
+      slots.sort((a,b) => a.arrive.localeCompare(b.arrive));
+      slots.forEach(s => { h += renderSlotChip(s, key, isP); });
+    } else {
+      h += `<span class="empty-label">${isSat?'שבת 🌙':d.getDay()===5?'שישי':'—'}</span>`;
+    }
+    h += `</div>`;
+    if (isP && !isSat) {
+      h += `<div class="week-add-col"><button class="btn-sm add" onclick="openAdd('${key}')">+</button></div>`;
+    }
+    h += `</div>`;
+  }
+  return h;
+}
+
+function renderMonth() {
+  const ms = new Date(state.cursor.getFullYear(), state.cursor.getMonth(), 1);
+  const start = addDays(ms, -ms.getDay());
+  const isP = state.role === 'partner';
+  const tk = todayKey();
+  const cm = state.cursor.getMonth();
+  let h = `<div class="month-header">${DAYS_SHORT.map(d=>`<div class="month-header-cell">${d}</div>`).join('')}</div><div class="month-grid">`;
+  for (let i=0;i<42;i++) {
+    const d = addDays(start,i);
+    const key = dateKey(d);
+    const slots = slotsForDate(key);
+    const isThisMonth = d.getMonth()===cm;
+    const isToday = key===tk;
+    const clickable = isP && isThisMonth;
+    h += `<div class="month-cell ${isThisMonth?'':'outside'} ${clickable?'clickable':''}" ${clickable?`onclick="openAdd('${key}')"`:''}><span class="month-num ${isToday?'today-num':''}">${d.getDate()}</span>`;
+    if (slots.length) {
+      h += `<div class="month-dots">${slots.map(()=>'<div class="month-dot"></div>').join('')}</div>`;
+      h += `<div class="month-time">${slots[0].arrive}</div>`;
+    }
+    h += `</div>`;
+  }
+  h += `</div>`;
+  return h;
+}
+
+function renderDay() {
+  const key = dateKey(state.cursor);
+  const slots = slotsForDate(key);
+  const isP = state.role === 'partner';
+  let h = `<div class="day-card">`;
+  if (slots.length) {
+    h += `<div class="dc-emoji">🏢</div><div class="dc-label">שלומית במשרד</div>`;
+    h += `<div class="day-slot-list">`;
+    slots.sort((a,b) => a.arrive.localeCompare(b.arrive));
+    slots.forEach(s => {
+      const arrH = parseInt(s.arrive);
+      const levH = parseInt(s.leave);
+      const barL = ((arrH-7)/15)*100;
+      const barW = ((levH-arrH)/15)*100;
+      const hasNote = s.note || msgsForDate(key, s.id).length > 0;
+      const hasUnread = hasUnreadMsgs(key, s.id);
+      h += `<div class="day-slot">
+        <div class="day-slot-time">${s.arrive} – ${s.leave}</div>
+        <div class="day-slot-bar"><div class="day-slot-bar-fill" style="left:${barL}%;width:${barW}%"></div></div>
+        <div class="day-slot-actions">
+          <button class="action-btn" style="background:#9b59b6" onclick="openNotePopup('${key}',${s.id})">💬 הודעות${hasUnread?' 🔴':''}</button>
+          ${isP?`<button class="action-btn" style="background:var(--blue2)" onclick="openEdit('${key}',${s.id})">✎</button><button class="action-btn" style="background:var(--orange)" onclick="doDelete(${s.id})">✕</button>`:''}
+        </div>
+      </div>`;
+    });
+    h += `</div>`;
+  } else {
+    h += `<div class="dc-emoji" style="opacity:.35">🏠</div><div class="dc-label">אין עדכון ליום הזה</div>`;
+  }
+  if (isP) h += `<div style="text-align:center;margin-top:18px"><button class="action-btn" style="background:var(--green)" onclick="openAdd('${key}')">+ הוסף מקבץ שעות</button></div>`;
+  h += `</div>`;
+  return h;
+}
+
+function renderModal() {
+  const d = parseDate(state.addMode);
+  const isEdit = state.editSlotId != null;
+  const title = `${isEdit?'עריכת':'הוספת'} שעות — ${DAYS_HE[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`;
+
+  // For leave time, disable times <= arrive
+  const leaveDisabled = t => t <= state.arrive;
+
+  let h = `<div class="overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>${title}</h3>`;
+  if (state.validationErr) h += `<div class="validation-err">${state.validationErr}</div>`;
+  h += `<label>שעת כניסה</label><div class="time-grid">${EVEN_SLOTS.map(t=>`<button class="time-chip ${state.arrive===t?'sel-arrive':''}" onclick="pickArrive('${t}')">${t}</button>`).join('')}</div>`;
+  h += `<label style="margin-top:18px">שעת יציאה</label><div class="time-grid">${EVEN_SLOTS.map(t=>`<button class="time-chip ${state.leave===t?'sel-leave':''} ${leaveDisabled(t)?'disabled':''}" onclick="pickLeave('${t}')">${t}</button>`).join('')}</div>`;
+  const recurSub = isEdit && state.recurring
+    ? 'שינוי לחד פעמי ימחק את כל המופעים העתידיים'
+    : `יווצר אוטומטית ביום ${DAYS_HE[parseDate(state.addMode).getDay()]} ל-12 שבועות קדימה`;
+  h += `<div class="recurring-toggle" onclick="toggleRecurring()"><div class="toggle-track ${state.recurring?'on':''}"><div class="toggle-knob"></div></div><div><div class="recurring-label">🔁 חוזר כל שבוע</div><div class="recurring-sub">${recurSub}</div></div></div>`;
+  h += `<label style="margin-top:18px">הערה (אופציונלי)</label><textarea class="note-input" id="slotNoteInput" placeholder="למשל: ישיבה ב-10, אפשר לתאם...">${state.slotNote}</textarea>`;
+  h += `<div class="modal-actions"><button class="save-btn ${state.saving?'loading':''}" onclick="doSave()" ${state.saving?'disabled':''}>${state.saving?'שומר...':'שמור ✓'}</button><button class="cancel-btn" onclick="closeModal()" ${state.saving?'disabled':''}>ביטול</button></div></div></div>`;
+  return h;
+}
+
+function renderNotePopup() {
+  const { date, slotId } = state.notePopup;
+  const d = parseDate(date);
+  const slots = slotsForDate(date);
+  const slot = slots.find(s => s.id === slotId);
+  const msgs = msgsForDate(date, slotId).sort((a,b) => a.timestamp - b.timestamp);
+  const mySender = state.role === 'partner' ? 'partner' : 'viewer';
+
+  let h = `<div class="note-popup" onclick="closeNotePopup()"><div class="note-popup-card" onclick="event.stopPropagation()">
+    <h4>💬 הודעות — ${DAYS_HE[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}${slot ? ` (${slot.arrive}–${slot.leave})` : ''}</h4>`;
+
+  // Show slot note if exists
+  if (slot && slot.note) {
+    h += `<div style="background:var(--entry-bg);padding:10px 14px;border-radius:12px;margin-bottom:10px"><div style="font-size:12px;color:var(--text3);margin-bottom:4px">הערת שלומית:</div><div class="note-text">${slot.note}</div></div>`;
+  }
+
+  // Messages
+  h += `<div class="msg-list">`;
+  if (!msgs.length && !(slot && slot.note)) {
+    h += `<div style="text-align:center;color:#ccc;font-size:13px;padding:20px 0">אין הודעות עדיין</div>`;
+  }
+  msgs.forEach(m => {
+    const sLabel = m.sender === 'partner' ? 'שלומית' : 'צופה';
+    h += `<div class="msg-bubble ${m.sender}">
+      <div>${m.text}</div>
+      <div class="msg-meta"><span>${sLabel}</span> · <span>${agoText(m.timestamp)}</span>${m.sender===mySender ? `<span class="msg-read-icon">${m.read_status ? '✓✓' : '✓'}</span>` : ''}</div>
+    </div>`;
+  });
+  h += `</div>`;
+
+  // Input
+  h += `<div class="msg-input-row"><input class="msg-input" id="msgInput" placeholder="כתוב הודעה..." value="${state.msgInput}"><button class="msg-send" onclick="sendMessage()">➤</button></div>`;
+  h += `<button class="note-close" onclick="closeNotePopup()">סגור</button></div></div>`;
+  return h;
+}
+
+// ─── Actions ──────────────────────────────────────────
+window.switchRole = () => { localStorage.removeItem('office_role'); state.role=null; render(); };
+window.setView = v => { state.view=v; render(); };
+window.goToday = () => { state.cursor=new Date(); render(); };
+window.nav = dir => { const d=new Date(state.cursor); if(state.view==='day')d.setDate(d.getDate()+dir); else if(state.view==='week')d.setDate(d.getDate()+dir*7); else d.setMonth(d.getMonth()+dir); state.cursor=d; render(); };
+
+function findSlotById(id) {
+  const numId = Number(id);
+  for (const [date, slots] of Object.entries(state.slots)) {
+    const s = slots.find(x => Number(x.id) === numId);
+    if (s) return s;
+  }
+  return null;
+}
+
+window.openAdd = key => {
+  state.arrive='09:00'; state.leave='17:00'; state.slotNote=''; state.editSlotId=null; state.validationErr=''; state.recurring=false; state.addMode=key; render();
+};
+window.openEdit = (key, id) => {
+  const slots = slotsForDate(key);
+  const s = slots.find(x => x.id === id);
+  if (!s) return;
+  state.arrive=s.arrive; state.leave=s.leave; state.slotNote=s.note||''; state.editSlotId=id; state.validationErr=''; state.recurring=!!s.recurring; state.addMode=key; render();
+};
+window.closeModal = () => { state.addMode=null; state.editSlotId=null; state.validationErr=''; state.recurring=false; render(); };
+window.toggleRecurring = () => { state.recurring = !state.recurring; render(); };
+window.pickArrive = t => { state.arrive=t; if(state.leave<=t) { const idx=EVEN_SLOTS.indexOf(t); state.leave=EVEN_SLOTS[Math.min(idx+1,EVEN_SLOTS.length-1)]; } state.validationErr=''; render(); };
+window.pickLeave = t => { if(t<=state.arrive) return; state.leave=t; state.validationErr=''; render(); };
+
+window.doSave = async () => {
+  if (!state.addMode || state.saving) return;
+  const noteEl = document.getElementById('slotNoteInput');
+  const note = noteEl ? noteEl.value : state.slotNote;
+
+  if (state.arrive >= state.leave) {
+    state.validationErr = 'שעת הכניסה חייבת להיות לפני שעת היציאה';
+    render(); return;
+  }
+
+  const isEdit = state.editSlotId != null;
+  state.saving = true; render();
+
+  try {
+    let res;
+    if (isEdit) {
+      res = await fetch(`/api/slots/${state.editSlotId}`, {
+        method:'PUT', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ arrive:state.arrive, leave:state.leave, note, recurring:state.recurring })
+      });
+    } else {
+      res = await fetch('/api/slots', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ date:state.addMode, arrive:state.arrive, leave:state.leave, note, recurring:state.recurring })
+      });
+    }
+
+    const resData = await res.json();
+    state.saving = false;
+
+    if (!res.ok) {
+      if (resData.error === 'overlap') {
+        state.validationErr = `חפיפה עם מקבץ קיים (${resData.with.arrive}–${resData.with.leave_time})`;
+      } else {
+        state.validationErr = resData.error || 'שגיאה';
+      }
+      render(); return;
+    }
+
+    const savedId = isEdit ? state.editSlotId : resData.id;
+    state.lastSavedSlotId = savedId;
+    state.addMode=null; state.editSlotId=null; state.validationErr='';
+    await fetchSlots();
+    await fetchNotifications();
+    render();
+    showToast(isEdit ? 'העדכון נשמר' : 'נוסף בהצלחה', 'success');
+    setTimeout(() => { state.lastSavedSlotId = null; render(); }, 1200);
+  } catch (e) {
+    console.error('Save failed:', e);
+    state.saving = false;
+    state.validationErr = 'שגיאת תקשורת — נסה שוב';
+    render();
+  }
+};
+
+window.doDelete = id => {
+  state.deleteConfirm = id;
+  render();
+};
+
+window.confirmDelete = async (deleteFuture) => {
+  const id = state.deleteConfirm;
+  if (!id) return;
+  state.deleteConfirm = null;
+  render();
+  
+  try {
+    const url = deleteFuture ? `/api/slots/${id}?future=1` : `/api/slots/${id}`;
+    const res = await fetch(url, { method:'DELETE' });
+    const data = await res.json();
+    
+    if (!res.ok) {
+      showToast(data.error || 'שגיאה במחיקה', 'error');
+      return;
+    }
+
+    await fetchSlots();
+    await fetchNotifications();
+    render();
+    showToast(deleteFuture ? 'כל המופעים העתידיים נמחקו' : 'הרשומה נמחקה', 'delete');
+  } catch(e) {
+    console.error('Delete failed:', e);
+    showToast('שגיאת תקשורת — נסה שוב', 'error');
+    await fetchSlots();
+    render();
+  }
+};
+
+window.cancelDelete = () => {
+  state.deleteConfirm = null;
+  render();
+};
+
+window.toggleBell = async () => {
+  state.bellOpen = !state.bellOpen;
+  if (state.bellOpen) await markNotifsRead();
+  render();
+};
+
+window.openNotePopup = async (date, slotId) => {
+  state.notePopup = { date, slotId };
+  state.msgInput = '';
+  await markMessagesRead();
+  await fetchMessages();
+  render();
+};
+window.closeNotePopup = () => { state.notePopup=null; state.msgInput=''; render(); };
+
+window.sendMessage = async () => {
+  const input = document.getElementById('msgInput');
+  const text = input ? input.value.trim() : '';
+  if (!text || !state.notePopup) return;
+  const sender = state.role === 'partner' ? 'partner' : 'viewer';
+  await fetch('/api/messages', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ date:state.notePopup.date, slot_id:state.notePopup.slotId, sender, text })
+  });
+  state.msgInput = '';
+  await fetchMessages();
+  await fetchNotifications();
+  render();
+  // Scroll to bottom of messages
+  setTimeout(() => { const ml = document.querySelector('.msg-list'); if(ml) ml.scrollTop = ml.scrollHeight; }, 100);
+};
+
+window.dismissInstall = () => { state.showInstall=false; render(); };
+window.promptInstall = promptInstall;
+
+window.exportExcel = async () => {
+  try {
+    showToast('מייצא...', 'info');
+    const res = await fetch('/api/export');
+    if (!res.ok) throw new Error('export failed');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'office-schedule.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('הקובץ ירד בהצלחה', 'success');
+  } catch(e) {
+    console.error('Export error:', e);
+    showToast('שגיאה בייצוא', 'error');
+  }
+};
+
+window.triggerImport = () => {
+  document.getElementById('importFileInput').click();
+};
+
+window.handleImport = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = '';
+  
+  // Store file buffer and show mode choice dialog
+  state.importFile = await file.arrayBuffer();
+  render();
+};
+
+window.cancelImport = () => {
+  state.importFile = null;
+  render();
+};
+
+window.doImport = async (mode) => {
+  if (!state.importFile) return;
+  const arrayBuffer = state.importFile;
+  state.importFile = null;
+  render();
+
+  showToast('מייבא נתונים...', 'info');
+
+  try {
+    const res = await fetch(`/api/import?mode=${mode}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+      body: arrayBuffer,
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      showToast(data.error || 'שגיאה ביבוא', 'error');
+      return;
+    }
+
+    await fetchSlots();
+    await fetchNotifications();
+    render();
+
+    let msg = `יובאו ${data.imported} רשומות`;
+    if (data.skipped > 0) msg += ` (${data.skipped} דולגו)`;
+    if (data.deleted > 0) msg += ` · ${data.deleted} נמחקו`;
+    showToast(msg, data.imported > 0 || data.deleted > 0 ? 'success' : 'error');
+  } catch(e) {
+    console.error('Import error:', e);
+    showToast('שגיאה ביבוא הקובץ', 'error');
+  }
+};
+
+document.addEventListener('click', e => { if(state.bellOpen && !e.target.closest('.bell-wrap')) { state.bellOpen=false; render(); } });
+// Handle Enter in message input
+document.addEventListener('keydown', e => { if(e.key==='Enter' && document.activeElement?.id==='msgInput') { e.preventDefault(); sendMessage(); } });
+
+async function init() {
+  try {
+    await fetchSlots();
+    await fetchMessages();
+    await fetchNotifications();
+  } catch(e) { console.error('Init fetch failed:', e); }
+  connectSSE();
+  render();
+}
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(e=>console.log('SW failed',e));
+if (state.role) init(); else render();
+</script>
+</body>
+</html>
