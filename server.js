@@ -6,7 +6,7 @@ const ExcelJS = require('exceljs');
 
 const app = express();
 const PORT = process.env.PORT || 3500;
-const DB_PATH = path.join(__dirname, 'schedule.db');
+const DB_PATH = process.env.RENDER ? '/data/schedule.db' : path.join(__dirname, 'schedule.db');
 const DAYS_HE = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
 
 let db;
