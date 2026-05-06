@@ -135,31 +135,31 @@ body { font-family:'Rubik',sans-serif; background:var(--bg); color:var(--text); 
 
 /* Modal */
 .overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:300; display:flex; align-items:flex-end; justify-content:center; animation:fadeIn .2s ease; }
-.modal { background:#fff; border-radius:26px 26px 0 0; padding:28px 22px calc(var(--safe-bottom) + 32px); width:100%; max-width:480px; max-height:85vh; overflow-y:auto; animation:slideUp .3s ease; }
-.modal h3 { font-size:19px; font-weight:800; color:var(--blue1); margin-bottom:22px; }
-.modal label { display:block; font-size:13px; font-weight:700; color:var(--text3); margin-bottom:8px; }
-.time-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
-.time-chip { padding:11px 0; border:2px solid var(--border); border-radius:11px; background:#fafbff; font-size:14px; font-weight:600; cursor:pointer; font-family:'Rubik',sans-serif; color:var(--text2); text-align:center; transition:all .15s; }
+.modal { background:#fff; border-radius:26px 26px 0 0; padding:20px 18px calc(var(--safe-bottom) + 20px); width:100%; max-width:480px; max-height:100dvh; overflow-y:auto; animation:slideUp .3s ease; }
+.modal h3 { font-size:17px; font-weight:800; color:var(--blue1); margin-bottom:12px; }
+.modal label { display:block; font-size:12px; font-weight:700; color:var(--text3); margin-bottom:4px; }
+.time-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:5px; }
+.time-chip { padding:8px 0; border:2px solid var(--border); border-radius:9px; background:#fafbff; font-size:13px; font-weight:600; cursor:pointer; font-family:'Rubik',sans-serif; color:var(--text2); text-align:center; transition:all .15s; }
 .time-chip:active { transform:scale(.95); }
 .time-chip.sel-arrive { background:var(--blue1); color:#fff; border-color:var(--blue1); }
 .time-chip.sel-leave { background:var(--orange); color:#fff; border-color:var(--orange); }
 .time-chip.disabled { opacity:.3; pointer-events:none; }
-.note-input { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:12px; font-family:'Rubik',sans-serif; font-size:14px; resize:none; min-height:60px; margin-top:4px; direction:rtl; }
+.note-input { width:100%; padding:8px 12px; border:2px solid var(--border); border-radius:10px; font-family:'Rubik',sans-serif; font-size:13px; resize:none; height:38px; direction:rtl; }
 .note-input:focus { outline:none; border-color:var(--blue2); }
-.modal-actions { display:flex; gap:10px; margin-top:26px; }
-.save-btn { flex:1; padding:15px 0; border:none; border-radius:15px; background:var(--green); color:#fff; font-size:17px; font-weight:800; cursor:pointer; font-family:'Rubik',sans-serif; }
-.cancel-btn { padding:15px 24px; border:none; border-radius:15px; background:var(--chip-bg); color:var(--text3); font-size:15px; font-weight:700; cursor:pointer; font-family:'Rubik',sans-serif; }
-.validation-err { background:rgba(242,84,27,.1); color:var(--orange); padding:10px 14px; border-radius:10px; font-size:13px; font-weight:600; margin-bottom:14px; }
+.modal-actions { display:flex; gap:8px; margin-top:10px; }
+.save-btn { flex:1; padding:13px 0; border:none; border-radius:14px; background:var(--green); color:#fff; font-size:16px; font-weight:800; cursor:pointer; font-family:'Rubik',sans-serif; }
+.cancel-btn { padding:13px 20px; border:none; border-radius:14px; background:var(--chip-bg); color:var(--text3); font-size:14px; font-weight:700; cursor:pointer; font-family:'Rubik',sans-serif; }
+.validation-err { background:rgba(242,84,27,.1); color:var(--orange); padding:8px 12px; border-radius:8px; font-size:12px; font-weight:600; margin-bottom:8px; }
 
 /* Recurring toggle */
-.recurring-toggle { display:flex; align-items:center; gap:12px; margin-top:18px; padding:14px 16px; background:var(--chip-bg); border-radius:14px; cursor:pointer; }
+.recurring-toggle { display:flex; align-items:center; gap:10px; margin-top:8px; padding:8px 12px; background:var(--chip-bg); border-radius:10px; cursor:pointer; }
 .recurring-toggle input { display:none; }
-.toggle-track { width:46px; height:26px; border-radius:13px; background:#ccc; position:relative; transition:background .2s; flex-shrink:0; }
+.toggle-track { width:40px; height:22px; border-radius:11px; background:#ccc; position:relative; transition:background .2s; flex-shrink:0; }
 .toggle-track.on { background:var(--green); }
-.toggle-knob { position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:transform .2s; box-shadow:0 1px 4px rgba(0,0,0,.15); }
-.toggle-track.on .toggle-knob { transform:translateX(20px); }
-.recurring-label { font-size:14px; font-weight:600; color:var(--text); }
-.recurring-sub { font-size:11px; color:var(--text3); margin-top:2px; }
+.toggle-knob { position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff; transition:transform .2s; box-shadow:0 1px 4px rgba(0,0,0,.15); }
+.toggle-track.on .toggle-knob { transform:translateX(18px); }
+.recurring-label { font-size:13px; font-weight:600; color:var(--text); }
+.recurring-sub { font-size:10px; color:var(--text3); margin-top:1px; }
 
 /* Recurring badge on slot chip */
 .rec-badge { background:var(--green); color:#fff; font-size:9px; font-weight:700; padding:2px 6px; border-radius:6px; white-space:nowrap; }
@@ -601,12 +601,12 @@ function renderModal() {
   let h = `<div class="overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>${title}</h3>`;
   if (state.validationErr) h += `<div class="validation-err">${state.validationErr}</div>`;
   h += `<label>שעת כניסה</label><div class="time-grid">${EVEN_SLOTS.map(t=>`<button class="time-chip ${state.arrive===t?'sel-arrive':''}" onclick="pickArrive('${t}')">${t}</button>`).join('')}</div>`;
-  h += `<label style="margin-top:18px">שעת יציאה</label><div class="time-grid">${EVEN_SLOTS.map(t=>`<button class="time-chip ${state.leave===t?'sel-leave':''} ${leaveDisabled(t)?'disabled':''}" onclick="pickLeave('${t}')">${t}</button>`).join('')}</div>`;
+  h += `<label style="margin-top:8px">שעת יציאה</label><div class="time-grid">${EVEN_SLOTS.map(t=>`<button class="time-chip ${state.leave===t?'sel-leave':''} ${leaveDisabled(t)?'disabled':''}" onclick="pickLeave('${t}')">${t}</button>`).join('')}</div>`;
   const recurSub = isEdit && state.recurring
     ? 'שינוי לחד פעמי ימחק את כל המופעים העתידיים'
     : `יווצר אוטומטית ביום ${DAYS_HE[parseDate(state.addMode).getDay()]} ל-12 שבועות קדימה`;
   h += `<div class="recurring-toggle" onclick="toggleRecurring()"><div class="toggle-track ${state.recurring?'on':''}"><div class="toggle-knob"></div></div><div><div class="recurring-label">🔁 חוזר כל שבוע</div><div class="recurring-sub">${recurSub}</div></div></div>`;
-  h += `<label style="margin-top:18px">הערה (אופציונלי)</label><textarea class="note-input" id="slotNoteInput" placeholder="למשל: ישיבה ב-10, אפשר לתאם...">${state.slotNote}</textarea>`;
+  h += `<label style="margin-top:8px">הערה (אופציונלי)</label><textarea class="note-input" id="slotNoteInput" placeholder="למשל: ישיבה ב-10...">${state.slotNote}</textarea>`;
   h += `<div class="modal-actions"><button class="save-btn ${state.saving?'loading':''}" onclick="doSave()" ${state.saving?'disabled':''}>${state.saving?'שומר...':'שמור ✓'}</button><button class="cancel-btn" onclick="closeModal()" ${state.saving?'disabled':''}>ביטול</button></div></div></div>`;
   return h;
 }
