@@ -598,7 +598,12 @@ function renderModal() {
   // For leave time, disable times <= arrive
   const leaveDisabled = t => t <= state.arrive;
 
-  let h = `<div class="overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>${title}</h3>`;
+  let h = `<div class="overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <button class="save-btn ${state.saving?'loading':''}" onclick="doSave()" ${state.saving?'disabled':''} style="padding:10px 24px;font-size:15px;border-radius:12px">${state.saving?'שומר...': isEdit?'עדכן ✓':'שמור ✓'}</button>
+      <span style="font-size:15px;font-weight:700;color:var(--blue1)">${DAYS_HE[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}</span>
+      <button class="cancel-btn" onclick="closeModal()" style="padding:10px 18px;font-size:13px;border-radius:12px">ביטול</button>
+    </div>`;
   if (state.validationErr) h += `<div class="validation-err">${state.validationErr}</div>`;
   h += `<label>שעת כניסה</label><div class="time-grid">${EVEN_SLOTS.map(t=>`<button class="time-chip ${state.arrive===t?'sel-arrive':''}" onclick="pickArrive('${t}')">${t}</button>`).join('')}</div>`;
   h += `<label style="margin-top:8px">שעת יציאה</label><div class="time-grid">${EVEN_SLOTS.map(t=>`<button class="time-chip ${state.leave===t?'sel-leave':''} ${leaveDisabled(t)?'disabled':''}" onclick="pickLeave('${t}')">${t}</button>`).join('')}</div>`;
@@ -607,7 +612,7 @@ function renderModal() {
     : `יווצר אוטומטית ביום ${DAYS_HE[parseDate(state.addMode).getDay()]} ל-12 שבועות קדימה`;
   h += `<div class="recurring-toggle" onclick="toggleRecurring()"><div class="toggle-track ${state.recurring?'on':''}"><div class="toggle-knob"></div></div><div><div class="recurring-label">🔁 חוזר כל שבוע</div><div class="recurring-sub">${recurSub}</div></div></div>`;
   h += `<label style="margin-top:8px">הערה (אופציונלי)</label><textarea class="note-input" id="slotNoteInput" placeholder="למשל: ישיבה ב-10...">${state.slotNote}</textarea>`;
-  h += `<div class="modal-actions"><button class="save-btn ${state.saving?'loading':''}" onclick="doSave()" ${state.saving?'disabled':''}>${state.saving?'שומר...':'שמור ✓'}</button><button class="cancel-btn" onclick="closeModal()" ${state.saving?'disabled':''}>ביטול</button></div></div></div>`;
+  h += `</div></div>`;
   return h;
 }
 
